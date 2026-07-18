@@ -13,7 +13,7 @@ static uint8_t AppTimedAlarmIndex(uint32_t now_ms)
 {
     static const uint32_t alarm_start_ms[] = {
         3000U, 10000U, 13000U, 19500U,
-        32500U, 39500U, 42500U, 49500U
+        32500U, 40000U, 43000U, 50000U
     };
     uint8_t i;
 
