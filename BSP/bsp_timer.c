@@ -42,7 +42,12 @@ uint32_t Timer_Get_Runtime_Ms(void)
 
 uint8_t Timer_Get_Runtime_Seconds99(void)
 {
-    uint32_t seconds = g_runtime_ms / 1000U;
+    uint32_t display_ms = g_runtime_ms;
+    uint32_t seconds;
 
+    if (display_ms >= APP_TIMED_DISPLAY_FREEZE_MS) {
+        display_ms = APP_TIMED_DISPLAY_FREEZE_MS;
+    }
+    seconds = display_ms / 1000U;
     return (seconds > 99U) ? 99U : (uint8_t)seconds;
 }

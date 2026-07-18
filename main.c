@@ -12,7 +12,7 @@
 static uint8_t AppTimedAlarmIndex(uint32_t now_ms)
 {
     static const uint16_t alarm_seconds[] = {
-        4U, 10U, 13U, 20U, 34U, 40U, 43U, 50U
+        4U, 10U, 13U, 21U, 35U, 41U, 44U, 51U
     };
     uint8_t i;
 
