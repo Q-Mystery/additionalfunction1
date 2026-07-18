@@ -2,6 +2,7 @@
 #include "AllHeader.h"
 
 static AppUltrasonic_Status_t g_ultrasonic_status;
+static bool g_ultrasonic_external_alarm;
 
 static void Ultrasonic_Trig_Low(void)
 {
@@ -22,7 +23,7 @@ static void Ultrasonic_SetSignalPins(bool obstacle)
 {
     uint32_t pins = ULTRASONIC_SIGNAL_PB19_PIN | ULTRASONIC_SIGNAL_PB24_PIN;
 
-    if (obstacle) {
+    if (obstacle || g_ultrasonic_external_alarm) {
         DL_GPIO_setPins(ULTRASONIC_SIGNAL_PORT, pins);
     } else {
         DL_GPIO_clearPins(ULTRASONIC_SIGNAL_PORT, pins);
@@ -32,6 +33,7 @@ static void Ultrasonic_SetSignalPins(bool obstacle)
 void AppUltrasonic_Init(void)
 {
     memset(&g_ultrasonic_status, 0, sizeof(g_ultrasonic_status));
+    g_ultrasonic_external_alarm = false;
     DL_GPIO_initDigitalOutput(ULTRASONIC_TRIG_IOMUX);
     DL_GPIO_initDigitalInputFeatures(ULTRASONIC_ECHO_IOMUX,
         DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_DOWN,
@@ -113,6 +115,12 @@ void AppUltrasonic_Update(void)
 bool AppUltrasonic_IsObstacle(void)
 {
     return g_ultrasonic_status.obstacle;
+}
+
+void AppUltrasonic_SetExternalAlarm(bool active)
+{
+    g_ultrasonic_external_alarm = active;
+    Ultrasonic_SetSignalPins(g_ultrasonic_status.obstacle);
 }
 
 const AppUltrasonic_Status_t *AppUltrasonic_GetStatus(void)

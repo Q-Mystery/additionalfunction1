@@ -43,6 +43,10 @@ uint32_t Timer_Get_Runtime_Ms(void)
 uint8_t Timer_Get_Runtime_Seconds99(void)
 {
     uint32_t seconds = g_runtime_ms / 1000U;
+    uint32_t display_stop_seconds = APP_TIMED_FINAL_MOTOR_OFF_MS / 1000U;
 
+    if (seconds > display_stop_seconds) {
+        seconds = display_stop_seconds;
+    }
     return (seconds > 99U) ? 99U : (uint8_t)seconds;
 }

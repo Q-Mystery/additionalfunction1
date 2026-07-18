@@ -272,10 +272,12 @@ static void Mission_UpdateArcExit(uint32_t dt_ms)
         g_track_mission.arc_count++;
     }
 
-    if (g_track_mission.arc_count >= TRACK_MISSION_TARGET_ARCS) {
-        Mission_SetState(APP_TRACK_STOPPED);
-    } else if (!s_first_lap_pause_done &&
-               (g_track_mission.arc_count >= TRACK_MISSION_FIRST_LAP_ARCS)) {
+    /*
+     * The timed final rule now owns the motor-off action. Do not stop the
+     * motor automatically on the fourth counted arc.
+     */
+    if (!s_first_lap_pause_done &&
+        (g_track_mission.arc_count >= TRACK_MISSION_FIRST_LAP_ARCS)) {
         Mission_SetState(APP_TRACK_FIRST_LAP_PAUSE);
     } else {
         Mission_SetState(APP_TRACK_COOLDOWN);

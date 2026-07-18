@@ -14,6 +14,7 @@ typedef struct {
 void AppUltrasonic_Init(void);
 void AppUltrasonic_Update(void);
 bool AppUltrasonic_IsObstacle(void);
+void AppUltrasonic_SetExternalAlarm(bool active);
 const AppUltrasonic_Status_t *AppUltrasonic_GetStatus(void);
 
 #endif

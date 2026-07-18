@@ -7,11 +7,48 @@
 #include "app_ultrasonic.h"
 #include "app_voice.h"
 
+#define APP_TIMED_ALARM_NONE (0xFFU)
+
+static uint8_t AppTimedAlarmIndex(uint32_t now_ms)
+{
+    static const uint16_t alarm_seconds[] = {
+        4U, 10U, 13U, 21U, 35U, 41U, 44U, 51U
+    };
+    uint8_t i;
+
+    for (i = 0U; i < (sizeof(alarm_seconds) / sizeof(alarm_seconds[0])); i++) {
+        uint32_t start_ms = (uint32_t)alarm_seconds[i] * 1000U;
+        if ((now_ms >= start_ms) &&
+            ((uint32_t)(now_ms - start_ms) < APP_TIMED_ALARM_DURATION_MS)) {
+            return i;
+        }
+    }
+
+    return APP_TIMED_ALARM_NONE;
+}
+
+static bool AppTimedPauseActive(uint32_t now_ms)
+{
+    return (now_ms >= APP_TIMED_PAUSE_START_MS) &&
+           (now_ms < APP_TIMED_PAUSE_END_MS);
+}
+
+static bool AppTimedFinalMotorOff(uint32_t now_ms)
+{
+    return now_ms >= APP_TIMED_FINAL_MOTOR_OFF_MS;
+}
+
 int main(void)
 {
     uint8_t display_divider = 0U;
+    uint8_t timed_alarm_index = APP_TIMED_ALARM_NONE;
+    uint8_t timed_alarm_last_index = APP_TIMED_ALARM_NONE;
+    uint32_t now_ms;
     bool obstacle_now = false;
     bool obstacle_last = false;
+    bool timed_alarm_active;
+    bool timed_pause_active;
+    bool timed_final_off;
 
     SYSCFG_DL_init();
     AppBCDDisplay_Init();
@@ -32,10 +69,34 @@ int main(void)
     AppTrackMission_Init();
 
     while (1) {
+        now_ms = Timer_Get_Runtime_Ms();
+        timed_alarm_index = AppTimedAlarmIndex(now_ms);
+        timed_alarm_active = (timed_alarm_index != APP_TIMED_ALARM_NONE);
+        timed_pause_active = AppTimedPauseActive(now_ms);
+        timed_final_off = AppTimedFinalMotorOff(now_ms);
+
         AppBCDDisplay_Update();
         AppUltrasonic_Update();
+        AppUltrasonic_SetExternalAlarm(timed_alarm_active);
+        if (timed_alarm_active) {
+            OPEN_MCULED();
+            Beep_ON();
+            if (timed_alarm_index != timed_alarm_last_index) {
+                (void)AppVoice_SendCommand(VOICE_OBSTACLE_COMMAND);
+                timed_alarm_last_index = timed_alarm_index;
+            }
+        } else {
+            CLOSE_MCULED();
+            Beep_OFF();
+            timed_alarm_last_index = APP_TIMED_ALARM_NONE;
+        }
+
         obstacle_now = AppUltrasonic_IsObstacle();
-        if (obstacle_now) {
+        if (timed_final_off) {
+            Motion_Stop(STOP_FREE);
+        } else if (timed_pause_active) {
+            Motion_Stop(STOP_BRAKE);
+        } else if (obstacle_now) {
             Motion_Stop(STOP_BRAKE);
             (void)AppVoice_TriggerObstacle();
         } else {
