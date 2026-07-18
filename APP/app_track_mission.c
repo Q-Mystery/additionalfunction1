@@ -273,7 +273,7 @@ static void Mission_UpdateArcExit(uint32_t dt_ms)
     }
 
     /*
-     * The timed 19.5 s and 51 s rules now own all motor stop actions. Keep
+     * The timed 19.5 s and 50 s rules now own all motor stop actions. Keep
      * gyro arc counting for OLED status and curve handling, but do not let arc
      * count stop or pause the motor.
      */
