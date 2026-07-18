@@ -18,7 +18,7 @@
 #define APP_TIMED_PAUSE_END_MS \
     (APP_TIMED_PAUSE_START_MS + APP_TIMED_PAUSE_DURATION_MS)
 #define APP_TIMED_ALARM_DURATION_MS        (1000U)
-#define APP_TIMED_FINAL_MOTOR_OFF_MS       (50000U)
+#define APP_TIMED_FINAL_MOTOR_OFF_MS       (49500U)
 #define APP_TIMED_DISPLAY_FREEZE_MS        APP_TIMED_FINAL_MOTOR_OFF_MS
 
 /* Two-digit BCD 7-segment display digit select: PA0=tens, PA1=ones. */
