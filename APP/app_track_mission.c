@@ -273,20 +273,21 @@ static void Mission_UpdateArcExit(uint32_t dt_ms)
     }
 
     /*
-     * The timed 50 s rule now owns the final motor-off action. Do not stop the
-     * motor automatically on the fourth counted arc.
+     * The timed 19.5 s and 50 s rules now own all motor stop actions. Keep gyro
+     * arc counting for OLED status and curve handling, but do not let arc count
+     * stop or pause the motor.
      */
     /*
     if (g_track_mission.arc_count >= TRACK_MISSION_TARGET_ARCS) {
         Mission_SetState(APP_TRACK_STOPPED);
-    } else
-    */
-    if (!s_first_lap_pause_done &&
-        (g_track_mission.arc_count >= TRACK_MISSION_FIRST_LAP_ARCS)) {
+    } else if (!s_first_lap_pause_done &&
+               (g_track_mission.arc_count >= TRACK_MISSION_FIRST_LAP_ARCS)) {
         Mission_SetState(APP_TRACK_FIRST_LAP_PAUSE);
     } else {
         Mission_SetState(APP_TRACK_COOLDOWN);
     }
+    */
+    Mission_SetState(APP_TRACK_COOLDOWN);
 }
 
 static void Mission_UpdateFirstLapPause(uint32_t dt_ms)

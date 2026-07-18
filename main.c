@@ -11,13 +11,16 @@
 
 static uint8_t AppTimedAlarmIndex(uint32_t now_ms)
 {
-    static const uint16_t alarm_seconds[] = {
-        3U, 10U, 13U, 19U, 32U, 39U, 42U, 49U
+    static const uint32_t alarm_start_ms[] = {
+        3000U, 10000U, 13000U, 19500U,
+        32500U, 40000U, 43000U, 50000U
     };
     uint8_t i;
 
-    for (i = 0U; i < (sizeof(alarm_seconds) / sizeof(alarm_seconds[0])); i++) {
-        uint32_t start_ms = (uint32_t)alarm_seconds[i] * 1000U;
+    for (i = 0U;
+         i < (sizeof(alarm_start_ms) / sizeof(alarm_start_ms[0]));
+         i++) {
+        uint32_t start_ms = alarm_start_ms[i];
         if ((now_ms >= start_ms) &&
             ((uint32_t)(now_ms - start_ms) < APP_TIMED_ALARM_DURATION_MS)) {
             return i;
