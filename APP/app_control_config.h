@@ -13,7 +13,7 @@
 #define MOTOR_DIRECT_TEST_START_DELAY_MS   (3000U)
 
 /* Timed race actions from power-on/runtime timer. */
-#define APP_TIMED_PAUSE_START_MS           (21000U)
+#define APP_TIMED_PAUSE_START_MS           (19000U)
 #define APP_TIMED_PAUSE_DURATION_MS        (10000U)
 #define APP_TIMED_PAUSE_END_MS \
     (APP_TIMED_PAUSE_START_MS + APP_TIMED_PAUSE_DURATION_MS)
